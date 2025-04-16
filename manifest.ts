@@ -8,7 +8,7 @@ import { GiveShoutOutWorkflow } from "./workflows/give_shout_out.ts";
  * Learn more: https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "give-shout-out",
+  name: "GembaShoutOut",
   description: "Brighten someone's day with a heartfelt thank you",
   icon: "assets/icon.png",
   functions: [FindGIFFunction],

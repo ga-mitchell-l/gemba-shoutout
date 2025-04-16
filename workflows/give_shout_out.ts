@@ -7,7 +7,7 @@ import { FindGIFFunction } from "../functions/find_gif.ts";
  * Learn more: https://api.slack.com/automation/workflows
  */
 const GiveShoutOutWorkflow = DefineWorkflow({
-  callback_id: "give_kudos_workflow",
+  callback_id: "give_shout_out_workflow",
   title: "Give a shout out",
   description: "Acknowledge the impact someone had on you",
   input_parameters: {
@@ -29,7 +29,7 @@ const GiveShoutOutWorkflow = DefineWorkflow({
  * as the first step.
  * Learn more: https://api.slack.com/automation/functions#open-a-form
  */
-const kudo = GiveShoutOutWorkflow.addStep(
+const shout_out = GiveShoutOutWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
     title: "Give a shoutout",
@@ -82,7 +82,7 @@ const kudo = GiveShoutOutWorkflow.addStep(
  * Learn more: https://api.slack.com/automation/functions/custom
  */
 const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
-  vibe: kudo.outputs.fields.guiding_principle,
+  vibe: shout_out.outputs.fields.guiding_principle,
 });
 
 /**
@@ -90,10 +90,10 @@ const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
  * Learn more: https://api.slack.com/automation/functions#catalog
  */
 GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: kudo.outputs.fields.shout_out_channel,
+  channel_id: shout_out.outputs.fields.shout_out_channel,
   message:
-    `*Hey <@${kudo.outputs.fields.gemban}>!* Someone wanted to share some kind words with you :otter:\n` +
-    `> ${kudo.outputs.fields.shout_out_message}\n` +
+    `*Hey <@${shout_out.outputs.fields.gemban}>!* Someone wanted to share some kind words with you :otter:\n` +
+    `> ${shout_out.outputs.fields.shout_out_message}\n` +
     `<${gif.outputs.URL}>`,
 });
 
