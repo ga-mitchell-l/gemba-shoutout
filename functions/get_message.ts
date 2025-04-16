@@ -33,7 +33,7 @@ export const GetMessageFunction = DefineFunction({
 
 export default SlackFunction(GetMessageFunction,({ inputs }) => {
     let slack_message = `<@${inputs.receiving_gemban}> has received a shout out `
-    +`from <@${inputs.shouting_gemban}!>\n`
+    +`from <@${inputs.shouting_gemban}>!\n`
 
     if (inputs.guiding_principle != undefined) {
         slack_message += `Guiding principle: *${inputs.guiding_principle}*\n`
