@@ -1,6 +1,6 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import { FindGIFFunction } from "./functions/find_gif.ts";
-import { GiveKudosWorkflow } from "./workflows/give_kudos.ts";
+import { GiveShoutOutWorkflow } from "./workflows/give_shout_out.ts";
 
 /**
  * The app manifest contains the app's configuration. This file defines
@@ -8,11 +8,11 @@ import { GiveKudosWorkflow } from "./workflows/give_kudos.ts";
  * Learn more: https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "give-kudos-app-1",
+  name: "give-shout-out",
   description: "Brighten someone's day with a heartfelt thank you",
   icon: "assets/icon.png",
   functions: [FindGIFFunction],
-  workflows: [GiveKudosWorkflow],
+  workflows: [GiveShoutOutWorkflow],
   outgoingDomains: [],
   botScopes: ["commands", "chat:write", "chat:write.public"],
 });

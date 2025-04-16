@@ -6,7 +6,7 @@ import { FindGIFFunction } from "../functions/find_gif.ts";
  * workflow is a function – either a built-in or custom function.
  * Learn more: https://api.slack.com/automation/workflows
  */
-const GiveKudosWorkflow = DefineWorkflow({
+const GiveShoutOutWorkflow = DefineWorkflow({
   callback_id: "give_kudos_workflow",
   title: "Give kudos",
   description: "Acknowledge the impact someone had on you",
@@ -29,16 +29,16 @@ const GiveKudosWorkflow = DefineWorkflow({
  * as the first step.
  * Learn more: https://api.slack.com/automation/functions#open-a-form
  */
-const kudo = GiveKudosWorkflow.addStep(
+const kudo = GiveShoutOutWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
-    title: "Give someone kudos",
-    interactivity: GiveKudosWorkflow.inputs.interactivity,
+    title: "Give a shoutout",
+    interactivity: GiveShoutOutWorkflow.inputs.interactivity,
     submit_label: "Share",
-    description: "Continue the positive energy through your written word",
+    description: "Show a Gemban you appreciate them",
     fields: {
       elements: [{
-        name: "doer_of_good_deeds",
+        name: "gemban",
         title: "Whose deeds are deemed worthy of a kudo?",
         description: "Recognizing such deeds is dazzlingly desirable of you!",
         type: Schema.slack.types.user_id,
@@ -65,7 +65,7 @@ const kudo = GiveKudosWorkflow.addStep(
           "No vibes, just plants 🪴",
         ],
       }],
-      required: ["doer_of_good_deeds", "kudo_channel", "kudo_message"],
+      required: ["gemban", "kudo_channel", "kudo_message"],
     },
   },
 );
@@ -76,7 +76,7 @@ const kudo = GiveKudosWorkflow.addStep(
  * later steps.
  * Learn more: https://api.slack.com/automation/functions/custom
  */
-const gif = GiveKudosWorkflow.addStep(FindGIFFunction, {
+const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
   vibe: kudo.outputs.fields.kudo_vibe,
 });
 
@@ -84,12 +84,12 @@ const gif = GiveKudosWorkflow.addStep(FindGIFFunction, {
  * Messages can be sent into a channel with the built-in SendMessage function.
  * Learn more: https://api.slack.com/automation/functions#catalog
  */
-GiveKudosWorkflow.addStep(Schema.slack.functions.SendMessage, {
+GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: kudo.outputs.fields.kudo_channel,
   message:
-    `*Hey <@${kudo.outputs.fields.doer_of_good_deeds}>!* Someone wanted to share some kind words with you :otter:\n` +
+    `*Hey <@${kudo.outputs.fields.gemban}>!* Someone wanted to share some kind words with you :otter:\n` +
     `> ${kudo.outputs.fields.kudo_message}\n` +
     `<${gif.outputs.URL}>`,
 });
 
-export { GiveKudosWorkflow };
+export { GiveShoutOutWorkflow };
