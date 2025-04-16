@@ -81,9 +81,9 @@ const shout_out = GiveShoutOutWorkflow.addStep(
  * later steps.
  * Learn more: https://api.slack.com/automation/functions/custom
  */
-const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
-  vibe: shout_out.outputs.fields.guiding_principle,
-});
+// const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
+//   vibe: shout_out.outputs.fields.guiding_principle,
+// });
 
 /**
  * Messages can be sent into a channel with the built-in SendMessage function.
@@ -92,9 +92,9 @@ const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
 GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: shout_out.outputs.fields.shout_out_channel,
   message:
-    `*Hey <@${shout_out.outputs.fields.gemban}>!* Someone wanted to share some kind words with you :otter:\n` +
-    `> ${shout_out.outputs.fields.shout_out_message}\n` +
-    `<${gif.outputs.URL}>`,
+    `<@${shout_out.outputs.fields.gemban}>! has received a shout out!\n` +
+    `for guiding principle *${shout_out.outputs.fields.guiding_principle}*\n` +
+    `> ${shout_out.outputs.fields.shout_out_message}\n`
 });
 
 export { GiveShoutOutWorkflow };
