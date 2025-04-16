@@ -16,7 +16,7 @@ export const GetMessageFunction = DefineFunction({
             type: Schema.types.string
         }
     },
-    required:[]
+    required:["receiving_gemban","shout_out_message"]
   },
   output_parameters: {
     properties: {
@@ -30,9 +30,13 @@ export const GetMessageFunction = DefineFunction({
 
 
 export default SlackFunction(GetMessageFunction,({ inputs }) => {
-    const slack_message = `<@${inputs.receiving_gemban}> has received a shout out!\n` +
-    `Guiding principle *${inputs.guiding_principle}*\n` +
-    `> ${inputs.shout_out_message}\n`
+    let slack_message = `<@${inputs.receiving_gemban}> has received a shout out!\n`
+
+    if (inputs.guiding_principle != undefined) {
+        slack_message += `Guiding principle: *${inputs.guiding_principle}*\n`
+    }
+
+    slack_message += `> ${inputs.shout_out_message}\n`
 
     return { outputs: {slack_message: slack_message} };
   }); 
