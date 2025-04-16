@@ -9,8 +9,8 @@ import { GiveShoutOutWorkflow } from "../workflows/give_shout_out.ts";
  */
 const trigger: Trigger<typeof GiveShoutOutWorkflow.definition> = {
   type: TriggerTypes.Shortcut,
-  name: "Give some kudos",
-  description: "Broadcast your appreciation with kind words and a GIF",
+  name: "Give a shout out",
+  description: "Broadcast your appreciation of a Gemban",
   workflow: `#/workflows/${GiveShoutOutWorkflow.definition.callback_id}`,
   inputs: {
     interactivity: {

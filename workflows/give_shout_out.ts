@@ -8,7 +8,7 @@ import { FindGIFFunction } from "../functions/find_gif.ts";
  */
 const GiveShoutOutWorkflow = DefineWorkflow({
   callback_id: "give_kudos_workflow",
-  title: "Give kudos",
+  title: "Give a shout out",
   description: "Acknowledge the impact someone had on you",
   input_parameters: {
     properties: {
@@ -39,22 +39,15 @@ const kudo = GiveShoutOutWorkflow.addStep(
     fields: {
       elements: [{
         name: "gemban",
-        title: "Whose deeds are deemed worthy of a kudo?",
-        description: "Recognizing such deeds is dazzlingly desirable of you!",
+        title: "Which Gemban would you like to shout out?",
         type: Schema.slack.types.user_id,
       }, {
-        name: "kudo_channel",
+        name: "shout_out_channel",
         title: "Where should this message be shared?",
         type: Schema.slack.types.channel_id,
       }, {
-        name: "kudo_message",
-        title: "What would you like to say?",
-        type: Schema.types.string,
-        long: true,
-      }, {
-        name: "kudo_vibe",
-        title: 'What is this kudo\'s "vibe"?',
-        description: "What sorts of energy is given off?",
+        name: "guiding_principle",
+        title: "What guiding principle do they embody?",
         type: Schema.types.string,
         enum: [
           "Lead with empathy 💓",
@@ -71,8 +64,13 @@ const kudo = GiveShoutOutWorkflow.addStep(
           "The sum of the team is greater than the parts 🧩",
           "Make a difference in the world 🌍",
         ],
+      }, {
+        name: "shout_out_message",
+        title: "Why do they deserve a shout out?",
+        type: Schema.types.string,
+        long: true,
       }],
-      required: ["gemban", "kudo_channel", "kudo_message"],
+      required: ["gemban", "shout_out_channel", "shout_out_message"],
     },
   },
 );
@@ -84,7 +82,7 @@ const kudo = GiveShoutOutWorkflow.addStep(
  * Learn more: https://api.slack.com/automation/functions/custom
  */
 const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
-  vibe: kudo.outputs.fields.kudo_vibe,
+  vibe: kudo.outputs.fields.guiding_principle,
 });
 
 /**
@@ -92,10 +90,10 @@ const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
  * Learn more: https://api.slack.com/automation/functions#catalog
  */
 GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: kudo.outputs.fields.kudo_channel,
+  channel_id: kudo.outputs.fields.shout_out_channel,
   message:
     `*Hey <@${kudo.outputs.fields.gemban}>!* Someone wanted to share some kind words with you :otter:\n` +
-    `> ${kudo.outputs.fields.kudo_message}\n` +
+    `> ${kudo.outputs.fields.shout_out_message}\n` +
     `<${gif.outputs.URL}>`,
 });
 
