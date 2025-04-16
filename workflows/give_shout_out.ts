@@ -1,5 +1,5 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { FindGIFFunction } from "../functions/find_gif.ts";
+import { GetMessageFunction } from "../functions/get_message.ts";
 
 /**
  * A workflow is a set of steps that are executed in order. Each step in a
@@ -81,9 +81,11 @@ const shout_out = GiveShoutOutWorkflow.addStep(
  * later steps.
  * Learn more: https://api.slack.com/automation/functions/custom
  */
-// const gif = GiveShoutOutWorkflow.addStep(FindGIFFunction, {
-//   vibe: shout_out.outputs.fields.guiding_principle,
-// });
+const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
+  receiving_gemban: shout_out.outputs.fields.gemban,
+  guiding_principle: shout_out.outputs.fields.guiding_principle,
+  shout_out_message: shout_out.outputs.fields.shout_out_message
+});
 
 /**
  * Messages can be sent into a channel with the built-in SendMessage function.
@@ -91,10 +93,7 @@ const shout_out = GiveShoutOutWorkflow.addStep(
  */
 GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: shout_out.outputs.fields.shout_out_channel,
-  message:
-    `<@${shout_out.outputs.fields.gemban}>! has received a shout out!\n` +
-    `for guiding principle *${shout_out.outputs.fields.guiding_principle}*\n` +
-    `> ${shout_out.outputs.fields.shout_out_message}\n`
+  message: slack_message.outputs.slack_message
 });
 
 export { GiveShoutOutWorkflow };
