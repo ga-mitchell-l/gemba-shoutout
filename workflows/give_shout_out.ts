@@ -38,9 +38,12 @@ const shout_out = GiveShoutOutWorkflow.addStep(
     description: "Show a Gemban you appreciate them",
     fields: {
       elements: [{
-        name: "gemban",
-        title: "Which Gemban would you like to shout out?",
-        type: Schema.slack.types.user_id,
+        name: "receiving_gembans",
+        title: "Which Gembans would you like to shout out?",
+        type: Schema.types.array,
+        items: {
+          type: Schema.slack.types.user_id,
+        },
       }, {
         name: "shout_out_channel",
         title: "Where should this message be shared?",
@@ -70,7 +73,7 @@ const shout_out = GiveShoutOutWorkflow.addStep(
         type: Schema.types.string,
         long: true,
       }],
-      required: ["gemban", "shout_out_channel", "shout_out_message"],
+      required: ["receiving_gembans", "shout_out_channel", "shout_out_message"],
     },
   },
 );
@@ -82,7 +85,7 @@ const shout_out = GiveShoutOutWorkflow.addStep(
  * Learn more: https://api.slack.com/automation/functions/custom
  */
 const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
-  receiving_gemban: shout_out.outputs.fields.gemban,
+  receiving_gembans: shout_out.outputs.fields.receiving_gembans,
   shouting_gemban: shout_out.outputs.submit_user,
   guiding_principle: shout_out.outputs.fields.guiding_principle,
   shout_out_message: shout_out.outputs.fields.shout_out_message,
