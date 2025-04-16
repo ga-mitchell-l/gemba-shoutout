@@ -83,8 +83,9 @@ const shout_out = GiveShoutOutWorkflow.addStep(
  */
 const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
   receiving_gemban: shout_out.outputs.fields.gemban,
+  shouting_gemban: shout_out.outputs.submit_user,
   guiding_principle: shout_out.outputs.fields.guiding_principle,
-  shout_out_message: shout_out.outputs.fields.shout_out_message
+  shout_out_message: shout_out.outputs.fields.shout_out_message,
 });
 
 /**
