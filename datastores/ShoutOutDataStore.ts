@@ -1,7 +1,7 @@
 import { DefineDatastore, Schema } from "deno-slack-sdk/mod.ts";
 
 export default DefineDatastore({
-  name: "shout_outs",
+  name: "ShoutOutDataStore",
   primary_key: "id",
   attributes: {
     id: {
