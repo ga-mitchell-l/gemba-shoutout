@@ -25,12 +25,16 @@ export const StoreShoutOutFunction = DefineFunction({
       timestamp: {
         type: Schema.slack.types.timestamp,
       },
+      bonus_guiding_principle: {
+        type: Schema.types.string
+      }
     },
     required: [
       "receiving_gembans",
       "shouting_gemban",
       "shout_out_message",
       "timestamp",
+      "bonus_guiding_principle"
     ],
   },
   output_parameters: {
@@ -48,6 +52,7 @@ export default SlackFunction(
       guiding_principle,
       shout_out_message,
       timestamp,
+      bonus_guiding_principle
     } = inputs;
 
     await receiving_gembans.forEach(async (receiving_gemban) => {
@@ -55,6 +60,10 @@ export default SlackFunction(
       let points = 1
       if (guiding_principle !== undefined) {
         points ++
+
+        if (guiding_principle == bonus_guiding_principle) {
+          points ++
+        }
       }
 
       const putResponse = await client.apps.datastore.put<

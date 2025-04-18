@@ -1,6 +1,7 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { GetMessageFunction } from "../functions/get_message.ts";
 import { StoreShoutOutFunction } from "../functions/store_shout_out.ts";
+import { GetConfigFunction } from "../functions/get_config.ts";
 
 const GiveShoutOutWorkflow = DefineWorkflow({
   callback_id: "give_shout_out_workflow",
@@ -65,12 +66,15 @@ const shout_out = GiveShoutOutWorkflow.addStep(
   },
 );
 
+const config = GiveShoutOutWorkflow.addStep(GetConfigFunction,{})
+
 GiveShoutOutWorkflow.addStep(StoreShoutOutFunction, {
   receiving_gembans: shout_out.outputs.fields.receiving_gembans,
   shouting_gemban: shout_out.outputs.submit_user,
   guiding_principle: shout_out.outputs.fields.guiding_principle,
   shout_out_message: shout_out.outputs.fields.shout_out_message,
-  timestamp: shout_out.outputs.timestamp_started
+  timestamp: shout_out.outputs.timestamp_started,
+  bonus_guiding_principle: config.outputs.guiding_principle
 })
 
 const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {

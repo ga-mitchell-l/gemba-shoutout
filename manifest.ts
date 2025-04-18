@@ -6,6 +6,7 @@ import ShoutOutDataStore from "./datastores/ShoutOutDataStore.ts";
 import { StoreShoutOutFunction } from "./functions/store_shout_out.ts";
 import ConfigDataStore from "./datastores/ConfigDataStore.ts";
 import { StoreConfigFunction } from "./functions/store_config.ts";
+import { GetConfigFunction } from "./functions/get_config.ts";
 
 export default Manifest({
   name: "GembaShoutOut",
@@ -15,6 +16,7 @@ export default Manifest({
     GetMessageFunction,
     StoreShoutOutFunction,
     StoreConfigFunction,
+    GetConfigFunction
   ],
   workflows: [GiveShoutOutWorkflow, ConfigShoutOutWorkflow],
   outgoingDomains: [],
