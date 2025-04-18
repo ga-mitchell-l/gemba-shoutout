@@ -1,21 +1,12 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { GetMessageFunction } from "../functions/get_message.ts";
 
-/**
- * A workflow is a set of steps that are executed in order. Each step in a
- * workflow is a function – either a built-in or custom function.
- * Learn more: https://api.slack.com/automation/workflows
- */
 const GiveShoutOutWorkflow = DefineWorkflow({
   callback_id: "give_shout_out_workflow",
   title: "Give a shout out",
   description: "Acknowledge the impact someone had on you",
   input_parameters: {
     properties: {
-      /**
-       * This workflow users interactivity to collect input from the user.
-       * Learn more: https://api.slack.com/automation/forms#add-interactivity
-       */
       interactivity: {
         type: Schema.slack.types.interactivity,
       },
@@ -24,11 +15,6 @@ const GiveShoutOutWorkflow = DefineWorkflow({
   },
 });
 
-/**
- * Collecting input from users can be done with the built-in OpenForm function
- * as the first step.
- * Learn more: https://api.slack.com/automation/functions#open-a-form
- */
 const shout_out = GiveShoutOutWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
@@ -78,12 +64,14 @@ const shout_out = GiveShoutOutWorkflow.addStep(
   },
 );
 
-/**
- * A custom function can be added as a workflow step to modify input data,
- * collect additional data for the response, and return information for use in
- * later steps.
- * Learn more: https://api.slack.com/automation/functions/custom
- */
+// GiveShoutOutWorkflow.addStep(StoreShoutOutFunction, {
+//   receiving_gemban: shout_out.outputs.fields.gemban,
+//   shouting_gemban: shout_out.outputs.submit_user,
+//   guiding_principle: shout_out.outputs.fields.guiding_principle,
+//   shout_out_message: shout_out.outputs.fields.shout_out_message,
+//   timestamp: shout_out.outputs.timestamp_started
+// })
+
 const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
   receiving_gembans: shout_out.outputs.fields.receiving_gembans,
   shouting_gemban: shout_out.outputs.submit_user,
@@ -91,10 +79,6 @@ const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
   shout_out_message: shout_out.outputs.fields.shout_out_message,
 });
 
-/**
- * Messages can be sent into a channel with the built-in SendMessage function.
- * Learn more: https://api.slack.com/automation/functions#catalog
- */
 GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: shout_out.outputs.fields.shout_out_channel,
   message: slack_message.outputs.slack_message
