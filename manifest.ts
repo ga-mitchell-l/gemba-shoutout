@@ -1,23 +1,30 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import { GiveShoutOutWorkflow } from "./workflows/give_shout_out.ts";
+import { ConfigShoutOutWorkflow } from "./workflows/config_shout_out.ts";
 import { GetMessageFunction } from "./functions/get_message.ts";
 import ShoutOutDataStore from "./datastores/ShoutOutDataStore.ts";
 import { StoreShoutOutFunction } from "./functions/store_shout_out.ts";
+import ConfigDataStore from "./datastores/ConfigDataStore.ts";
+import { StoreConfigFunction } from "./functions/store_config.ts";
 
 export default Manifest({
   name: "GembaShoutOut",
   description: "Brighten someone's day with a heartfelt thank you",
   icon: "assets/icon.png",
-  functions: [GetMessageFunction, StoreShoutOutFunction],
-  workflows: [GiveShoutOutWorkflow],
+  functions: [
+    GetMessageFunction,
+    StoreShoutOutFunction,
+    StoreConfigFunction,
+  ],
+  workflows: [GiveShoutOutWorkflow, ConfigShoutOutWorkflow],
   outgoingDomains: [],
-  datastores: [ShoutOutDataStore],
+  datastores: [ShoutOutDataStore, ConfigDataStore],
   botScopes: [
-    "commands", 
-    "chat:write", 
+    "commands",
+    "chat:write",
     "chat:write.public",
     "datastore:read",
-    "datastore:write"
+    "datastore:write",
   ],
 });
 
@@ -34,4 +41,3 @@ export default Manifest({
 //    - top 3 givers
 //    - top 3 receivers
 //    - top value
-
