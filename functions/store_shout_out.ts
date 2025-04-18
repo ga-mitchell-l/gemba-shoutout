@@ -51,6 +51,12 @@ export default SlackFunction(
     } = inputs;
 
     await receiving_gembans.forEach(async (receiving_gemban) => {
+
+      let points = 1
+      if (guiding_principle !== undefined) {
+        points ++
+      }
+
       const putResponse = await client.apps.datastore.put<
         typeof ShoutOutDataStore.definition
       >({
@@ -62,6 +68,7 @@ export default SlackFunction(
           guiding_principle,
           shout_out_message,
           timestamp,
+          points: points
         },
       });
 
