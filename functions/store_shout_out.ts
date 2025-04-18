@@ -26,15 +26,14 @@ export const StoreShoutOutFunction = DefineFunction({
         type: Schema.slack.types.timestamp,
       },
       bonus_guiding_principle: {
-        type: Schema.types.string
-      }
+        type: Schema.types.string,
+      },
     },
     required: [
       "receiving_gembans",
       "shouting_gemban",
       "shout_out_message",
       "timestamp",
-      "bonus_guiding_principle"
     ],
   },
   output_parameters: {
@@ -52,17 +51,19 @@ export default SlackFunction(
       guiding_principle,
       shout_out_message,
       timestamp,
-      bonus_guiding_principle
+      bonus_guiding_principle,
     } = inputs;
 
     await receiving_gembans.forEach(async (receiving_gemban) => {
-
-      let points = 1
+      let points = 1;
       if (guiding_principle !== undefined) {
-        points ++
+        points++;
 
-        if (guiding_principle == bonus_guiding_principle) {
-          points ++
+        if (
+          bonus_guiding_principle !== undefined &&
+          guiding_principle == bonus_guiding_principle
+        ) {
+          points++;
         }
       }
 
@@ -77,7 +78,7 @@ export default SlackFunction(
           guiding_principle,
           shout_out_message,
           timestamp,
-          points: points
+          points: points,
         },
       });
 

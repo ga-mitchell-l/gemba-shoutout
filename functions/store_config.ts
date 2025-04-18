@@ -16,7 +16,6 @@ export const StoreConfigFunction = DefineFunction({
     },
     required: [
       "channel_id",
-      "guiding_principle",
     ],
   },
   output_parameters: {

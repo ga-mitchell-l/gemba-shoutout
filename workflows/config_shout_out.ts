@@ -47,7 +47,7 @@ const config = ConfigShoutOutWorkflow.addStep(
           "Make a difference in the world 🌍",
         ],
       }],
-      required: ["shout_out_channel", "guiding_principle"],
+      required: ["shout_out_channel"],
     },
   },
 );

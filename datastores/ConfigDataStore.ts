@@ -9,6 +9,7 @@ export default DefineDatastore({
     },
     channel_id: {
         type: Schema.slack.types.channel_id,
+        required: true
     },
     guiding_principle: {
         type: Schema.types.string,
