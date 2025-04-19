@@ -32,9 +32,6 @@ export default SlackFunction(
       guiding_principle,
     } = inputs;
 
-    console.log(channel_id)
-    console.log(guiding_principle)
-
     const putResponse = await client.apps.datastore.put<
       typeof ConfigDataStore.definition
     >({
