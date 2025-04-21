@@ -33,10 +33,6 @@ const shout_out = GiveShoutOutWorkflow.addStep(
           type: Schema.slack.types.user_id,
         },
       }, {
-        name: "shout_out_channel",
-        title: "Where should this message be shared?",
-        type: Schema.slack.types.channel_id,
-      }, {
         name: "guiding_principle",
         title: "What guiding principle do they embody?",
         type: Schema.types.string,
@@ -61,12 +57,12 @@ const shout_out = GiveShoutOutWorkflow.addStep(
         type: Schema.types.string,
         long: true,
       }],
-      required: ["receiving_gembans", "shout_out_channel", "shout_out_message"],
+      required: ["receiving_gembans", "shout_out_message"],
     },
   },
 );
 
-const config = GiveShoutOutWorkflow.addStep(GetConfigFunction,{})
+const config = GiveShoutOutWorkflow.addStep(GetConfigFunction, {});
 
 GiveShoutOutWorkflow.addStep(StoreShoutOutFunction, {
   receiving_gembans: shout_out.outputs.fields.receiving_gembans,
@@ -74,8 +70,8 @@ GiveShoutOutWorkflow.addStep(StoreShoutOutFunction, {
   guiding_principle: shout_out.outputs.fields.guiding_principle,
   shout_out_message: shout_out.outputs.fields.shout_out_message,
   timestamp: shout_out.outputs.timestamp_started,
-  bonus_guiding_principle: config.outputs.guiding_principle
-})
+  bonus_guiding_principle: config.outputs.guiding_principle,
+});
 
 const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
   receiving_gembans: shout_out.outputs.fields.receiving_gembans,
@@ -85,8 +81,8 @@ const slack_message = GiveShoutOutWorkflow.addStep(GetMessageFunction, {
 });
 
 GiveShoutOutWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: shout_out.outputs.fields.shout_out_channel,
-  message: slack_message.outputs.slack_message
+  channel_id: config.outputs.channel_id,
+  message: slack_message.outputs.slack_message,
 });
 
 export { GiveShoutOutWorkflow };

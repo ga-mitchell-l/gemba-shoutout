@@ -18,10 +18,10 @@ const ConfigShoutOutWorkflow = DefineWorkflow({
 const config = ConfigShoutOutWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
-    title: "Configurate Shout Outs",
+    title: "Configure Shout Outs",
     interactivity: ConfigShoutOutWorkflow.inputs.interactivity,
     submit_label: "Update",
-    description: "Configurate the shout outs",
+    description: "Configure the shout outs",
     fields: {
       elements: [{
         name: "shout_out_channel",

@@ -4,7 +4,7 @@ import { ConfigShoutOutWorkflow } from "../workflows/config_shout_out.ts";
 
 const trigger: Trigger<typeof ConfigShoutOutWorkflow.definition> = {
   type: TriggerTypes.Shortcut,
-  name: "Configurate Shout Outs",
+  name: "Configure Shout Outs",
   description: "Update shout out configuration",
   workflow: `#/workflows/${ConfigShoutOutWorkflow.definition.callback_id}`,
   inputs: {
