@@ -13,14 +13,21 @@ export const StoreConfigFunction = DefineFunction({
       guiding_principle: {
         type: Schema.types.string,
       },
+      user_id: {
+        type: Schema.slack.types.user_id
+      }
     },
     required: [
-      "channel_id",
+      "channel_id","user_id"
     ],
   },
   output_parameters: {
-    properties: {},
-    required: [],
+    properties: {
+      message: {
+        type: Schema.types.string
+      }
+    },
+    required: ["message"],
   },
 });
 
@@ -31,6 +38,18 @@ export default SlackFunction(
       channel_id,
       guiding_principle,
     } = inputs;
+
+    const getUserResult = await client.users.info({
+      user: inputs.user_id
+    })
+    if (!getUserResult.ok) {
+      return { error: `Failed get user: ${getUserResult.error}` };
+    }
+
+    const is_admin = Boolean(getUserResult.user.is_admin)
+    if (!is_admin) {
+      return {outputs: {message: "Only admins are permitted to change shout out config"}}
+    }
 
     const putResponse = await client.apps.datastore.put<
       typeof ConfigDataStore.definition
@@ -47,6 +66,6 @@ export default SlackFunction(
       return { error: `Failed to save config: ${putResponse.error}` };
     }
 
-    return { outputs: {} };
+    return { outputs: {message: "Shout out config updated successfully!"} };
   },
 );

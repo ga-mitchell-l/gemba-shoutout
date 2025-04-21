@@ -52,15 +52,16 @@ const config = ConfigShoutOutWorkflow.addStep(
   },
 );
 
-ConfigShoutOutWorkflow.addStep(StoreConfigFunction, {
+const storeConfig = ConfigShoutOutWorkflow.addStep(StoreConfigFunction, {
     channel_id: config.outputs.fields.shout_out_channel,
     guiding_principle: config.outputs.fields.guiding_principle,
+    user_id: config.outputs.submit_user
   })
   
 ConfigShoutOutWorkflow.addStep(Schema.slack.functions.SendEphemeralMessage, {
     channel_id: config.outputs.fields.shout_out_channel,
     user_id: config.outputs.submit_user,
-    message: "Shout out config updated successfully!"
+    message: storeConfig.outputs.message
   }
   );
 
