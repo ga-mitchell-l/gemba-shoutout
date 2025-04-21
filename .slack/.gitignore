@@ -1,2 +1,6 @@
-apps.dev.json
-cache/
+dist
+package
+.DS_Store
+.slack/apps.dev.json
+*.Identifier
+deno.lock
