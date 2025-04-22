@@ -7,6 +7,7 @@ import { StoreShoutOutFunction } from "./functions/store_shout_out.ts";
 import ConfigDataStore from "./datastores/ConfigDataStore.ts";
 import { StoreConfigFunction } from "./functions/store_config.ts";
 import { GetConfigFunction } from "./functions/get_config.ts";
+import { RaffleWorkflow } from "./workflows/raffle.ts";
 
 export default Manifest({
   name: "GembaShoutOut",
@@ -16,9 +17,13 @@ export default Manifest({
     GetMessageFunction,
     StoreShoutOutFunction,
     StoreConfigFunction,
-    GetConfigFunction
+    GetConfigFunction,
   ],
-  workflows: [GiveShoutOutWorkflow, ConfigShoutOutWorkflow],
+  workflows: [
+    GiveShoutOutWorkflow,
+    ConfigShoutOutWorkflow,
+    RaffleWorkflow,
+  ],
   outgoingDomains: [],
   datastores: [ShoutOutDataStore, ConfigDataStore],
   botScopes: [
@@ -27,7 +32,7 @@ export default Manifest({
     "chat:write.public",
     "datastore:read",
     "datastore:write",
-    "users:read"
+    "users:read",
   ],
 });
 
