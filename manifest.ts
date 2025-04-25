@@ -1,13 +1,14 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import { GiveShoutOutWorkflow } from "./workflows/give_shout_out.ts";
 import { ConfigShoutOutWorkflow } from "./workflows/config_shout_out.ts";
+import { RaffleWorkflow } from "./workflows/raffle.ts";
 import { GetMessageFunction } from "./functions/get_message.ts";
-import ShoutOutDataStore from "./datastores/ShoutOutDataStore.ts";
 import { StoreShoutOutFunction } from "./functions/store_shout_out.ts";
-import ConfigDataStore from "./datastores/ConfigDataStore.ts";
 import { StoreConfigFunction } from "./functions/store_config.ts";
 import { GetConfigFunction } from "./functions/get_config.ts";
-import { RaffleWorkflow } from "./workflows/raffle.ts";
+import { SpinRaffleFunction } from "./functions/spin_raffle.ts";
+import ShoutOutDataStore from "./datastores/ShoutOutDataStore.ts";
+import ConfigDataStore from "./datastores/ConfigDataStore.ts";
 
 export default Manifest({
   name: "GembaShoutOut",
@@ -18,6 +19,7 @@ export default Manifest({
     StoreShoutOutFunction,
     StoreConfigFunction,
     GetConfigFunction,
+    SpinRaffleFunction,
   ],
   workflows: [
     GiveShoutOutWorkflow,
