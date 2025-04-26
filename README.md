@@ -13,6 +13,7 @@ Created from the [deno give kudos template](https://github.com/slack-samples/den
   - [Give a Shout Out](#give-a-shout-out)
   - [Raffle](#raffle)
   - [Raffle Stats](#raffle-stats)
+- [Creating Data For Local Development](#creating-data-for-local-development)
 - [Testing](#testing)
 
 ---
@@ -54,4 +55,20 @@ Run all tests with `deno test`:
 
 ```zsh
 $ deno test
+```
+## Creating Data For Local Development
+As only one trigger can be run at a time when developing locally it can be useful to
+import some data to play around with, and to make it possible to run certain triggers.
+If an ID is imported twice, it overwrites it.
+
+```zsh
+$ slack datastore bulk-put '{"datastore":"ShoutOutDataStore"}' --from-file data/shoutouts.jsonl
+
+$ slack datastore bulk-put '{"datastore":"ConfigDataStore"}' --from-file data/config.jsonl
+```
+to query data:
+```zsh
+$ slack datastore query --datastore ShoutOutDataStore '{"limit": 8}' --output json
+
+$ slack datastore query --datastore ConfigDataStore '{"limit": 8}' --output json
 ```
