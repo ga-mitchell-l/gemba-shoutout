@@ -17,6 +17,9 @@ export const GetConfigFunction = DefineFunction({
       guiding_principle: {
         type: Schema.types.string,
       },
+      next_guiding_principle: {
+        type: Schema.types.string
+      }
     },
     required: [
       "channel_id",
@@ -44,6 +47,7 @@ export default SlackFunction(
     const outputs = {
       channel_id: getResp.item.channel_id,
       guiding_principle: getResp.item.guiding_principle,
+      next_guiding_principle: getResp.item.next_guiding_principle
     };
 
     return { outputs: outputs };

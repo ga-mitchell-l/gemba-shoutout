@@ -12,6 +12,9 @@ export const SpinRaffleFunction = DefineFunction({
       channel_id: {
         type: Schema.slack.types.channel_id,
       },
+      next_guiding_principle: {
+        type: Schema.types.string
+      }
     },
     required: [
       "event_timestamp",
@@ -114,7 +117,10 @@ export default SlackFunction(
     raffle_message +=
       `Our winner for ${month} is <@${winner_user_id}> ${emoji1}${emoji2}\n`;
     raffle_message += `\n`;
-    raffle_message += `${nextMonth}'s guiding principle is: *TODO*\n`;
+    
+    if (inputs.next_guiding_principle!=="") {
+      raffle_message += `${nextMonth}'s guiding principle is: *${inputs.next_guiding_principle}*\n`;
+    }
     raffle_message +=
       `Don’t forget to <https://gembaadvantage.atlassian.net/servicedesk/customer/portal/14|raise a ticket> `;
     raffle_message +=

@@ -20,6 +20,7 @@ const config = RaffleWorkflow.addStep(GetConfigFunction, {});
 RaffleWorkflow.addStep(SpinRaffleFunction, {
   event_timestamp: RaffleWorkflow.inputs.event_timestamp,
   channel_id: config.outputs.channel_id,
+  next_guiding_principle: config.outputs.next_guiding_principle
 });
 
 export { RaffleWorkflow };
