@@ -24,6 +24,25 @@ export const SpinRaffleFunction = DefineFunction({
   },
 });
 
+function GetRandomEmoji(): string {
+  const yay_emojis = new Array<string>(
+    ":partying_face:",
+    ":bongo_blob:",
+    ":blob_excited:",
+    ":blob-hype:",
+    ":blueblob_jump:",
+    ":celebrate:",
+    ":frog-yay:",
+    ":meow_party:",
+    ":dance-doggo:",
+    ":headbang:",
+    ":green_heart:",
+    ":tada:"
+  );
+  const index = Math.floor(Math.random() * (yay_emojis.length - 1));
+  return yay_emojis[index]
+}
+
 export default SlackFunction(
   SpinRaffleFunction,
   async ({ inputs, client }) => {
@@ -67,6 +86,7 @@ export default SlackFunction(
 
     const winnerIndex = Math.floor(Math.random() * (raffle_entries.length - 1));
     const winner_user_id = raffle_entries[winnerIndex];
+    
     const month = raffle_date.toLocaleDateString("en-GB", { month: "long" });
     const shouting_count = shouting_gembans.size;
     const receiving_count = receiving_gembans.size;
@@ -75,6 +95,8 @@ export default SlackFunction(
       raffle_date.getMonth() + 1,
       1,
     ).toLocaleDateString("en-GB", { month: "long" });
+    const emoji1 = GetRandomEmoji();
+    const emoji2 = GetRandomEmoji();
 
     let raffle_message = `Hi Gemba! *${month}* has brought us `;
     raffle_message += `*${shouting_count}* Gembans shouting out - `;
@@ -90,7 +112,7 @@ export default SlackFunction(
     raffle_message +=
       `:drum_with_drumsticks: :drum_with_drumsticks: :drum_with_drumsticks:\n`;
     raffle_message +=
-      `Our winner for ${month} is <@${winner_user_id}> :partying_face::bongo_blob:\n`;
+      `Our winner for ${month} is <@${winner_user_id}> ${emoji1}${emoji2}\n`;
     raffle_message += `\n`;
     raffle_message += `${nextMonth}'s guiding principle is: *TODO*\n`;
     raffle_message +=
@@ -98,8 +120,6 @@ export default SlackFunction(
     raffle_message +=
       `and nominate people for Small Awards too! We want to continue hearing and celebrating you! `;
     raffle_message += `:admission_tickets: :admission_tickets:`;
-
-    // could do something cool selecting a random few emojis from a list
 
     // would be nice to include the users photo
     // need to call api to get user info
