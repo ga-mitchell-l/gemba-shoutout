@@ -13,19 +13,23 @@ export const StoreConfigFunction = DefineFunction({
       guiding_principle: {
         type: Schema.types.string,
       },
+      next_guiding_principle: {
+        type: Schema.types.string,
+      },
       user_id: {
-        type: Schema.slack.types.user_id
-      }
+        type: Schema.slack.types.user_id,
+      },
     },
     required: [
-      "channel_id","user_id"
+      "channel_id",
+      "user_id",
     ],
   },
   output_parameters: {
     properties: {
       message: {
-        type: Schema.types.string
-      }
+        type: Schema.types.string,
+      },
     },
     required: ["message"],
   },
@@ -37,19 +41,20 @@ export default SlackFunction(
     const {
       channel_id,
       guiding_principle,
+      next_guiding_principle
     } = inputs;
 
     const getUserResult = await client.users.info({
-      user: inputs.user_id
-    })
+      user: inputs.user_id,
+    });
     if (!getUserResult.ok) {
       return { error: `Failed get user: ${getUserResult.error}` };
     }
 
-    const is_admin = Boolean(getUserResult.user.is_admin)
-    if (!is_admin) {
-      return {outputs: {message: "Only admins are permitted to change shout out config"}}
-    }
+    // const is_admin = Boolean(getUserResult.user.is_admin)
+    // if (!is_admin) {
+    //   return {outputs: {message: "Only admins are permitted to change shout out config"}}
+    // }
 
     const putResponse = await client.apps.datastore.put<
       typeof ConfigDataStore.definition
@@ -58,7 +63,8 @@ export default SlackFunction(
       item: {
         id: "1",
         channel_id,
-        guiding_principle
+        guiding_principle,
+        next_guiding_principle,
       },
     });
 
@@ -66,6 +72,6 @@ export default SlackFunction(
       return { error: `Failed to save config: ${putResponse.error}` };
     }
 
-    return { outputs: {message: "Shout out config updated successfully!"} };
+    return { outputs: { message: "Shout out config updated successfully!" } };
   },
 );

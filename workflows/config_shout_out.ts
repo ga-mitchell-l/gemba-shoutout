@@ -46,6 +46,25 @@ const config = ConfigShoutOutWorkflow.addStep(
           "The sum of the team is greater than the parts 🧩",
           "Make a difference in the world 🌍",
         ],
+      }, {
+        name: "next_guiding_principle",
+        title: "Next month's guiding principle",
+        type: Schema.types.string,
+        enum: [
+          "Lead with empathy 💓",
+          "Relentless focus on the customer value 💼",
+          "The best ideas win 💡",
+          "Get it done ✅",
+          "Embrace failure 😵",
+          "Continuously learn and develop others 🎓",
+          "Be inclusive 👐",
+          "Be ready to adapt 🦀",
+          "Leave it better than you found it 🌸",
+          "Think different, explore and be inventive 🧭",
+          "Never lose your passion in our customer mission ❤️‍🔥",
+          "The sum of the team is greater than the parts 🧩",
+          "Make a difference in the world 🌍",
+        ],
       }],
       required: ["shout_out_channel"],
     },
@@ -55,6 +74,7 @@ const config = ConfigShoutOutWorkflow.addStep(
 const storeConfig = ConfigShoutOutWorkflow.addStep(StoreConfigFunction, {
     channel_id: config.outputs.fields.shout_out_channel,
     guiding_principle: config.outputs.fields.guiding_principle,
+    next_guiding_principle: config.outputs.fields.next_guiding_principle,
     user_id: config.outputs.submit_user
   })
   
