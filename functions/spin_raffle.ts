@@ -118,7 +118,7 @@ export default SlackFunction(
       `Our winner for ${month} is <@${winner_user_id}> ${emoji1}${emoji2}\n`;
     raffle_message += `\n`;
     
-    if (inputs.next_guiding_principle!=="") {
+    if (!inputs.next_guiding_principle!==undefined) {
       raffle_message += `${nextMonth}'s guiding principle is: *${inputs.next_guiding_principle}*\n`;
     }
     raffle_message +=
