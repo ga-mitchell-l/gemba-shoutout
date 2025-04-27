@@ -1,4 +1,8 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import {
+  DatastoreQueryResponse,
+  DatastoreSchema,
+} from "https://deno.land/x/deno_slack_api@2.8.0/typed-method-types/apps.ts";
 
 export const SpinRaffleFunction = DefineFunction({
   callback_id: "spin-raffle",
@@ -56,26 +60,11 @@ export default SlackFunction(
       },
     });
 
-    const raffle_entries: string[] = [];
-    const shouting_gembans = new Set<string>();
-    const receiving_gembans = new Set<string>();
-
-    result.items.forEach((shoutout) => {
-      for (let i = 0; i < shoutout.points; i++) {
-        raffle_entries.push(shoutout.receiving_gemban);
-        receiving_gembans.add(shoutout.receiving_gemban);
-
-        raffle_entries.push(shoutout.shouting_gemban);
-        shouting_gembans.add(shoutout.shouting_gemban);
-      }
-    });
-
-    const winnerIndex = Math.floor(Math.random() * (raffle_entries.length - 1));
-    const winner_user_id = raffle_entries[winnerIndex];
+    const { shouting_count, receiving_count, winner_user_id } = getRaffleWinner(
+      result,
+    );
 
     const month = raffle_date.toLocaleDateString("en-GB", { month: "long" });
-    const shouting_count = shouting_gembans.size;
-    const receiving_count = receiving_gembans.size;
     const nextMonth = new Date(
       raffle_date.getFullYear(),
       raffle_date.getMonth() + 1,
@@ -144,6 +133,28 @@ export default SlackFunction(
     return { outputs: {} };
   },
 );
+
+function getRaffleWinner(result: DatastoreQueryResponse<DatastoreSchema>) {
+  const raffle_entries: string[] = [];
+  const shouting_gembans = new Set<string>();
+  const receiving_gembans = new Set<string>();
+
+  result.items.forEach((shoutout) => {
+    for (let i = 0; i < shoutout.points; i++) {
+      raffle_entries.push(shoutout.receiving_gemban);
+      receiving_gembans.add(shoutout.receiving_gemban);
+
+      raffle_entries.push(shoutout.shouting_gemban);
+      shouting_gembans.add(shoutout.shouting_gemban);
+    }
+  });
+
+  const winnerIndex = Math.floor(Math.random() * (raffle_entries.length - 1));
+  const winner_user_id = raffle_entries[winnerIndex];
+  const shouting_count = shouting_gembans.size;
+  const receiving_count = receiving_gembans.size;
+  return { shouting_count, receiving_count, winner_user_id };
+}
 
 function getMonthTimeStamps(raffle_date: Date) {
   const month_start = new Date(
