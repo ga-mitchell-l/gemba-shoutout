@@ -17,6 +17,23 @@ const GiveShoutOutWorkflow = DefineWorkflow({
   },
 });
 
+const guiding_principles = [
+  "Lead with empathy 💓",
+  "Relentless focus on the customer value 💼",
+  "The best ideas win 💡",
+  "Get it done ✅",
+  "Embrace failure 😵",
+  "Continuously learn and develop others 🎓",
+  "Be inclusive 👐",
+  "Be ready to adapt 🦀",
+  "Leave it better than you found it 🌸",
+  "Think different, explore and be inventive 🧭",
+  "Never lose your passion in our customer mission ❤️‍🔥",
+  "The sum of the team is greater than the parts 🧩",
+  "Make a difference in the world 🌍",
+];
+
+
 const shout_out = GiveShoutOutWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
@@ -36,21 +53,7 @@ const shout_out = GiveShoutOutWorkflow.addStep(
         name: "guiding_principle",
         title: "What guiding principle do they embody?",
         type: Schema.types.string,
-        enum: [
-          "Lead with empathy 💓",
-          "Relentless focus on the customer value 💼",
-          "The best ideas win 💡",
-          "Get it done ✅",
-          "Embrace failure 😵",
-          "Continuously learn and develop others 🎓",
-          "Be inclusive 👐",
-          "Be ready to adapt 🦀",
-          "Leave it better than you found it 🌸",
-          "Think different, explore and be inventive 🧭",
-          "Never lose your passion in our customer mission ❤️‍🔥",
-          "The sum of the team is greater than the parts 🧩",
-          "Make a difference in the world 🌍",
-        ],
+        enum: guiding_principles,
       }, {
         name: "shout_out_message",
         title: "Why do they deserve a shout out?",

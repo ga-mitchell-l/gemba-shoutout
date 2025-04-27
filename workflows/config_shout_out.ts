@@ -15,6 +15,22 @@ const ConfigShoutOutWorkflow = DefineWorkflow({
   },
 });
 
+const guiding_principles = [
+  "Lead with empathy 💓",
+  "Relentless focus on the customer value 💼",
+  "The best ideas win 💡",
+  "Get it done ✅",
+  "Embrace failure 😵",
+  "Continuously learn and develop others 🎓",
+  "Be inclusive 👐",
+  "Be ready to adapt 🦀",
+  "Leave it better than you found it 🌸",
+  "Think different, explore and be inventive 🧭",
+  "Never lose your passion in our customer mission ❤️‍🔥",
+  "The sum of the team is greater than the parts 🧩",
+  "Make a difference in the world 🌍",
+];
+
 const config = ConfigShoutOutWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
@@ -31,40 +47,12 @@ const config = ConfigShoutOutWorkflow.addStep(
         name: "guiding_principle",
         title: "Current guiding principle",
         type: Schema.types.string,
-        enum: [
-          "Lead with empathy 💓",
-          "Relentless focus on the customer value 💼",
-          "The best ideas win 💡",
-          "Get it done ✅",
-          "Embrace failure 😵",
-          "Continuously learn and develop others 🎓",
-          "Be inclusive 👐",
-          "Be ready to adapt 🦀",
-          "Leave it better than you found it 🌸",
-          "Think different, explore and be inventive 🧭",
-          "Never lose your passion in our customer mission ❤️‍🔥",
-          "The sum of the team is greater than the parts 🧩",
-          "Make a difference in the world 🌍",
-        ],
+        enum: guiding_principles,
       }, {
         name: "next_guiding_principle",
         title: "Next month's guiding principle",
         type: Schema.types.string,
-        enum: [
-          "Lead with empathy 💓",
-          "Relentless focus on the customer value 💼",
-          "The best ideas win 💡",
-          "Get it done ✅",
-          "Embrace failure 😵",
-          "Continuously learn and develop others 🎓",
-          "Be inclusive 👐",
-          "Be ready to adapt 🦀",
-          "Leave it better than you found it 🌸",
-          "Think different, explore and be inventive 🧭",
-          "Never lose your passion in our customer mission ❤️‍🔥",
-          "The sum of the team is greater than the parts 🧩",
-          "Make a difference in the world 🌍",
-        ],
+        enum: guiding_principles,
       }],
       required: ["shout_out_channel"],
     },
@@ -72,17 +60,16 @@ const config = ConfigShoutOutWorkflow.addStep(
 );
 
 const storeConfig = ConfigShoutOutWorkflow.addStep(StoreConfigFunction, {
-    channel_id: config.outputs.fields.shout_out_channel,
-    guiding_principle: config.outputs.fields.guiding_principle,
-    next_guiding_principle: config.outputs.fields.next_guiding_principle,
-    user_id: config.outputs.submit_user
-  })
-  
-ConfigShoutOutWorkflow.addStep(Schema.slack.functions.SendEphemeralMessage, {
-    channel_id: config.outputs.fields.shout_out_channel,
-    user_id: config.outputs.submit_user,
-    message: storeConfig.outputs.message
-  }
-  );
+  channel_id: config.outputs.fields.shout_out_channel,
+  guiding_principle: config.outputs.fields.guiding_principle,
+  next_guiding_principle: config.outputs.fields.next_guiding_principle,
+  user_id: config.outputs.submit_user,
+});
 
-  export { ConfigShoutOutWorkflow };
+ConfigShoutOutWorkflow.addStep(Schema.slack.functions.SendEphemeralMessage, {
+  channel_id: config.outputs.fields.shout_out_channel,
+  user_id: config.outputs.submit_user,
+  message: storeConfig.outputs.message,
+});
+
+export { ConfigShoutOutWorkflow };
