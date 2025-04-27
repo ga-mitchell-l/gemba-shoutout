@@ -13,8 +13,8 @@ export const SpinRaffleFunction = DefineFunction({
         type: Schema.slack.types.channel_id,
       },
       next_guiding_principle: {
-        type: Schema.types.string
-      }
+        type: Schema.types.string,
+      },
     },
     required: [
       "event_timestamp",
@@ -26,25 +26,6 @@ export const SpinRaffleFunction = DefineFunction({
     required: [],
   },
 });
-
-function GetRandomEmoji(): string {
-  const yay_emojis = new Array<string>(
-    ":partying_face:",
-    ":bongo_blob:",
-    ":blob_excited:",
-    ":blob-hype:",
-    ":blueblob_jump:",
-    ":celebrate:",
-    ":frog-yay:",
-    ":meow_party:",
-    ":dance-doggo:",
-    ":headbang:",
-    ":green_heart:",
-    ":tada:"
-  );
-  const index = Math.floor(Math.random() * (yay_emojis.length - 1));
-  return yay_emojis[index]
-}
 
 export default SlackFunction(
   SpinRaffleFunction,
@@ -59,6 +40,8 @@ export default SlackFunction(
     // if (raffle_date.getDate()!==1) {
     //     return
     // }
+    // maybe have a debug mode here?
+
     const { month_start_timestamp, month_end_timestamp } = getMonthTimeStamps(
       raffle_date,
     );
@@ -89,7 +72,7 @@ export default SlackFunction(
 
     const winnerIndex = Math.floor(Math.random() * (raffle_entries.length - 1));
     const winner_user_id = raffle_entries[winnerIndex];
-    
+
     const month = raffle_date.toLocaleDateString("en-GB", { month: "long" });
     const shouting_count = shouting_gembans.size;
     const receiving_count = receiving_gembans.size;
@@ -101,45 +84,62 @@ export default SlackFunction(
     const emoji1 = GetRandomEmoji();
     const emoji2 = GetRandomEmoji();
 
-    let raffle_message = `Hi Gemba! *${month}* has brought us `;
-    raffle_message += `*${shouting_count}* Gembans shouting out - `;
-    raffle_message +=
-      `with a total of *${receiving_count}* of you receiving shoutouts!\n`;
-    raffle_message +=
-      `And remember, you get double points if your shoutout is tagged with one of `;
-    raffle_message +=
+    let raffle_message_1 =
+      `:gemba: Hi Gemba!:gemba: **${month}** has brought us `;
+    raffle_message_1 += `**${shouting_count}** Gembans shouting out - `;
+    raffle_message_1 +=
+      `with a total of **${receiving_count}** of you receiving shoutouts!\n\n`;
+    raffle_message_1 +=
+      `Remember, you get **double points** if your shoutout is tagged with one of `;
+    raffle_message_1 +=
       `<https://gembaadvantage.atlassian.net/wiki/spaces/BA/pages/1011515428/Our+Guiding+Principles|our Guiding Principles>, `;
-    raffle_message +=
-      `and triple shoutout points if it's the guiding principle of the month! :martial_arts_uniform: :rocket: :handshake::skin-tone-3: :first_place_medal:\n`;
-    raffle_message += `\n`;
-    raffle_message +=
-      `:drum_with_drumsticks: :drum_with_drumsticks: :drum_with_drumsticks:\n`;
-    raffle_message +=
+    raffle_message_1 +=
+      `and **triple shoutout points** if it's the guiding principle of the month! :martial_arts_uniform: :rocket: :handshake::skin-tone-3: :first_place_medal:\n\n`;
+    raffle_message_1 += `\n`;
+    raffle_message_1 +=
+      `:drum_with_drumsticks: :drum_with_drumsticks: :drum_with_drumsticks:\n\n`;
+    raffle_message_1 +=
       `Our winner for ${month} is <@${winner_user_id}> ${emoji1}${emoji2}\n`;
-    raffle_message += `\n`;
-    
-    if (!inputs.next_guiding_principle!==undefined) {
-      raffle_message += `${nextMonth}'s guiding principle is: *${inputs.next_guiding_principle}*\n`;
-    }
-    raffle_message +=
-      `Don’t forget to <https://gembaadvantage.atlassian.net/servicedesk/customer/portal/14|raise a ticket> `;
-    raffle_message +=
-      `and nominate people for Small Awards too! We want to continue hearing and celebrating you! `;
-    raffle_message += `:admission_tickets: :admission_tickets:`;
+    raffle_message_1 += `\n`;
 
-    // would be nice to include the users photo
-    // need to call api to get user info
-    // also pass blocks rather than text into post message
+    let raffle_message_2 = ``;
+    if (inputs.next_guiding_principle !== undefined) {
+      raffle_message_2 +=
+        `${nextMonth}'s guiding principle is: *${inputs.next_guiding_principle}*\n`;
+    }
+    raffle_message_2 +=
+      `Don’t forget to <https://gembaadvantage.atlassian.net/servicedesk/customer/portal/14|raise a ticket> `;
+    raffle_message_2 +=
+      `and nominate people for Small Awards too! We want to continue hearing and celebrating you! `;
+    raffle_message_2 += `:admission_tickets: :admission_tickets:`;
+
+    const getUserResult = await client.users.profile.get({
+      user: winner_user_id,
+    });
+    if (!getUserResult.ok) {
+      return { error: `Failed get user: ${getUserResult.error}` };
+    }
+    const winner_avatar_url = getUserResult.profile.image_192;
+
+    const blocks = raffleWinnerBlocks(
+      raffle_message_1,
+      winner_avatar_url,
+      raffle_message_2,
+    );
+
     try {
       const result = await client.chat.postMessage({
         channel: channel_id,
-        text: raffle_message,
+        blocks: blocks,
+        text: "test",
       });
 
       console.log(result);
     } catch (error) {
       console.error(error);
     }
+
+    // now update the config to be next months guiding principle
 
     return { outputs: {} };
   },
@@ -167,4 +167,52 @@ function getMonthTimeStamps(raffle_date: Date) {
   const month_end_timestamp = Math.floor(month_end.getTime() / 1000);
   const month_start_timestamp = Math.floor(month_start.getTime() / 1000);
   return { month_start_timestamp, month_end_timestamp };
+}
+
+function GetRandomEmoji(): string {
+  const yay_emojis = new Array<string>(
+    ":partying_face:",
+    ":bongo_blob:",
+    ":blob_excited:",
+    ":blob-hype:",
+    ":blueblob_jump:",
+    ":celebrate:",
+    ":frog-yay:",
+    ":meow_party:",
+    ":dance-doggo:",
+    ":headbang:",
+    ":green_heart:",
+    ":tada:",
+  );
+  const index = Math.floor(Math.random() * (yay_emojis.length - 1));
+  return yay_emojis[index];
+}
+
+function raffleWinnerBlocks(
+  message_part_1: string,
+  winner_avatar_url: string,
+  message_part_2: string,
+): any[] {
+  return [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: `Monthly Shout Out Raffle`,
+      },
+    },
+    {
+      type: "markdown",
+      text: message_part_1,
+    },
+    {
+      type: "image",
+      image_url: winner_avatar_url,
+      alt_text: "The winner's avatar",
+    },
+    {
+      type: "markdown",
+      text: message_part_2,
+    },
+  ];
 }
