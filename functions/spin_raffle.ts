@@ -3,6 +3,7 @@ import {
   DatastoreQueryResponse,
   DatastoreSchema,
 } from "https://deno.land/x/deno_slack_api@2.8.0/typed-method-types/apps.ts";
+import { FunctionRuntimeParameters } from "https://deno.land/x/deno_slack_sdk@2.15.0/functions/types.ts";
 
 export const SpinRaffleFunction = DefineFunction({
   callback_id: "spin-raffle",
@@ -49,7 +50,9 @@ export default SlackFunction(
     // if this was called by the scheduled trigger and it is not the
     // first of the month, do not continue
     if (scheduled === "true" && raffle_date.getDate() !== 1) {
-      console.timeLog("Raffle not run as it was scheduled and it is not the first of the month.")
+      console.timeLog(
+        "Raffle not run as it was scheduled and it is not the first of the month.",
+      );
       return { outputs: {} };
     }
 
@@ -80,37 +83,17 @@ export default SlackFunction(
       raffle_date.getMonth() + 1,
       1,
     ).toLocaleDateString("en-GB", { month: "long" });
-    const emoji1 = GetRandomEmoji();
-    const emoji2 = GetRandomEmoji();
 
-    let raffle_message_1 =
-      `:gemba: Hi Gemba! :gemba: **${month}** has brought us `;
-    raffle_message_1 += `**${shouting_count}** Gembans shouting out - `;
-    raffle_message_1 +=
-      `with a total of **${receiving_count}** of you receiving shoutouts!\n\n`;
-    raffle_message_1 +=
-      `Remember, you get **double points** if your shoutout is tagged with one of `;
-    raffle_message_1 +=
-      `<https://gembaadvantage.atlassian.net/wiki/spaces/BA/pages/1011515428/Our+Guiding+Principles|our Guiding Principles>, `;
-    raffle_message_1 +=
-      `and **triple shoutout points** if it's the guiding principle of the month! :martial_arts_uniform: :rocket: :handshake::skin-tone-3: :first_place_medal:\n\n`;
-    raffle_message_1 += `\n`;
-    raffle_message_1 +=
-      `:drum_with_drumsticks: :drum_with_drumsticks: :drum_with_drumsticks:\n\n`;
-    raffle_message_1 +=
-      `Our winner for ${month} is <@${winner_user_id}> ${emoji1}${emoji2}\n`;
-    raffle_message_1 += `\n`;
+    const raffle_message_1 = getRaffleMessage1(
+      month,
+      shouting_count,
+      receiving_count,
+      winner_user_id,
+      GetRandomEmoji(),
+      GetRandomEmoji(),
+    );
 
-    let raffle_message_2 = ``;
-    if (inputs.next_guiding_principle !== undefined) {
-      raffle_message_2 +=
-        `${nextMonth}'s guiding principle is: *${inputs.next_guiding_principle}*\n`;
-    }
-    raffle_message_2 +=
-      `Don’t forget to <https://gembaadvantage.atlassian.net/servicedesk/customer/portal/14|raise a ticket> `;
-    raffle_message_2 +=
-      `and nominate people for Small Awards too! We want to continue hearing and celebrating you! `;
-    raffle_message_2 += `:admission_tickets: :admission_tickets:`;
+    const raffle_message_2 = getRaffleMessage2(inputs, nextMonth);
 
     const getUserResult = await client.users.profile.get({
       user: winner_user_id,
@@ -142,6 +125,59 @@ export default SlackFunction(
     return { outputs: {} };
   },
 );
+
+function getRaffleMessage2(
+  inputs: FunctionRuntimeParameters<
+    {
+      event_timestamp: { type: "slack#/types/timestamp" };
+      channel_id: { type: "slack#/types/channel_id" };
+      next_guiding_principle: { type: "string" };
+      scheduled: { type: "string" };
+    },
+    ("channel_id" | "event_timestamp" | "scheduled")[]
+  >,
+  nextMonth: string,
+) {
+  let raffle_message_2 = ``;
+  if (inputs.next_guiding_principle !== undefined) {
+    raffle_message_2 +=
+      `${nextMonth}'s guiding principle is: *${inputs.next_guiding_principle}*\n`;
+  }
+  raffle_message_2 +=
+    `Don’t forget to <https://gembaadvantage.atlassian.net/servicedesk/customer/portal/14|raise a ticket> `;
+  raffle_message_2 +=
+    `and nominate people for Small Awards too! We want to continue hearing and celebrating you! `;
+  raffle_message_2 += `:admission_tickets: :admission_tickets:`;
+  return raffle_message_2;
+}
+
+function getRaffleMessage1(
+  month: string,
+  shouting_count: number,
+  receiving_count: number,
+  winner_user_id: string,
+  emoji1: string,
+  emoji2: string,
+) {
+  let raffle_message_1 =
+    `:gemba: Hi Gemba! :gemba: **${month}** has brought us `;
+  raffle_message_1 += `**${shouting_count}** Gembans shouting out - `;
+  raffle_message_1 +=
+    `with a total of **${receiving_count}** of you receiving shoutouts!\n\n`;
+  raffle_message_1 +=
+    `Remember, you get **double points** if your shoutout is tagged with one of `;
+  raffle_message_1 +=
+    `<https://gembaadvantage.atlassian.net/wiki/spaces/BA/pages/1011515428/Our+Guiding+Principles|our Guiding Principles>, `;
+  raffle_message_1 +=
+    `and **triple shoutout points** if it's the guiding principle of the month! :martial_arts_uniform: :rocket: :handshake::skin-tone-3: :first_place_medal:\n\n`;
+  raffle_message_1 += `\n`;
+  raffle_message_1 +=
+    `:drum_with_drumsticks: :drum_with_drumsticks: :drum_with_drumsticks:\n\n`;
+  raffle_message_1 +=
+    `Our winner for ${month} is <@${winner_user_id}> ${emoji1}${emoji2}\n`;
+  raffle_message_1 += `\n`;
+  return raffle_message_1;
+}
 
 function getRaffleWinner(result: DatastoreQueryResponse<DatastoreSchema>) {
   const raffle_entries: string[] = [];
