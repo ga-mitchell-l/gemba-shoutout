@@ -4,6 +4,7 @@ import {
   DatastoreSchema,
 } from "https://deno.land/x/deno_slack_api@2.8.0/typed-method-types/apps.ts";
 import { FunctionRuntimeParameters } from "https://deno.land/x/deno_slack_sdk@2.15.0/functions/types.ts";
+import ConfigDataStore from "../datastores/ConfigDataStore.ts";
 
 export const SpinRaffleFunction = DefineFunction({
   callback_id: "spin-raffle",
@@ -43,6 +44,7 @@ export default SlackFunction(
       event_timestamp,
       channel_id,
       scheduled,
+      next_guiding_principle,
     } = inputs;
 
     const raffle_date = new Date(event_timestamp * 1000);
@@ -118,6 +120,25 @@ export default SlackFunction(
       return {
         error: `Failed post raffle message: ${postMessageResult.error}`,
       };
+    }
+
+    // only do this if we are rolling over to the next month
+    if (scheduled == "true" && next_guiding_principle != undefined) {
+      const putResponse = await client.apps.datastore.put<
+        typeof ConfigDataStore.definition
+      >({
+        datastore: ConfigDataStore.name,
+        item: {
+          id: "1",
+          channel_id: channel_id,
+          guiding_principle: next_guiding_principle,
+          next_guiding_principle: "",
+        },
+      });
+
+      if (!putResponse.ok) {
+        return { error: `Failed to save config: ${putResponse.error}` };
+      }
     }
 
     // now update the config to be next months guiding principle
