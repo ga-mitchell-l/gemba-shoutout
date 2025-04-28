@@ -49,6 +49,7 @@ export default SlackFunction(
     // if this was called by the scheduled trigger and it is not the
     // first of the month, do not continue
     if (scheduled === "true" && raffle_date.getDate() !== 1) {
+      console.timeLog("Raffle not run as it was scheduled and it is not the first of the month.")
       return { outputs: {} };
     }
 
@@ -56,7 +57,7 @@ export default SlackFunction(
       raffle_date,
     );
 
-    const result = await client.apps.datastore.query({
+    const getShoutOutResult = await client.apps.datastore.query({
       datastore: "ShoutOutDataStore",
       expression: "#timestamp between :time_start AND :time_end",
       expression_attributes: { "#timestamp": "timestamp" },
@@ -65,9 +66,12 @@ export default SlackFunction(
         ":time_end": month_end_timestamp,
       },
     });
+    if (!getShoutOutResult.ok) {
+      return { error: `Failed get shout outs: ${getShoutOutResult.error}` };
+    }
 
     const { shouting_count, receiving_count, winner_user_id } = getRaffleWinner(
-      result,
+      getShoutOutResult,
     );
 
     const month = raffle_date.toLocaleDateString("en-GB", { month: "long" });
@@ -80,7 +84,7 @@ export default SlackFunction(
     const emoji2 = GetRandomEmoji();
 
     let raffle_message_1 =
-      `:gemba: Hi Gemba!:gemba: **${month}** has brought us `;
+      `:gemba: Hi Gemba! :gemba: **${month}** has brought us `;
     raffle_message_1 += `**${shouting_count}** Gembans shouting out - `;
     raffle_message_1 +=
       `with a total of **${receiving_count}** of you receiving shoutouts!\n\n`;
@@ -122,16 +126,15 @@ export default SlackFunction(
       raffle_message_2,
     );
 
-    try {
-      const result = await client.chat.postMessage({
-        channel: channel_id,
-        blocks: blocks,
-        text: "test",
-      });
-
-      console.log(result);
-    } catch (error) {
-      console.error(error);
+    const postMessageResult = await client.chat.postMessage({
+      channel: channel_id,
+      blocks: blocks,
+      text: "Gemba Raffle results failed to post message correctly",
+    });
+    if (!postMessageResult.ok) {
+      return {
+        error: `Failed post raffle message: ${postMessageResult.error}`,
+      };
     }
 
     // now update the config to be next months guiding principle
