@@ -2,9 +2,9 @@ import { Trigger } from "deno-slack-sdk/types.ts";
 import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
 import { RaffleWorkflow } from "../workflows/raffle.ts";
 
-const temp_raffle_trigger: Trigger<typeof RaffleWorkflow.definition> = {
+const on_demand_raffle_trigger: Trigger<typeof RaffleWorkflow.definition> = {
   type: TriggerTypes.Shortcut,
-  name: "Raffle Trigger",
+  name: "On Demand Raffle Trigger",
   description: "On demand raffle",
   workflow: "#/workflows/raffle_workflow",
   inputs: {
@@ -17,4 +17,4 @@ const temp_raffle_trigger: Trigger<typeof RaffleWorkflow.definition> = {
   },
 };
 
-export default temp_raffle_trigger;
+export default on_demand_raffle_trigger;

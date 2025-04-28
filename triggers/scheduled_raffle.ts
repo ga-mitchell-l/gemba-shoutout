@@ -2,8 +2,8 @@ import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
 import { ScheduledTrigger } from "deno-slack-api/typed-method-types/workflows/triggers/scheduled.ts";
 import { RaffleWorkflow } from "../workflows/raffle.ts";
 
-const schedule: ScheduledTrigger<typeof RaffleWorkflow.definition> = {
-  name: "Raffle Trigger",
+const scheduled_raffle_trigger: ScheduledTrigger<typeof RaffleWorkflow.definition> = {
+  name: "Scheduled Raffle Trigger",
   type: TriggerTypes.Scheduled,
   workflow: `#/workflows/${RaffleWorkflow.definition.callback_id}`,
   inputs: {
@@ -21,4 +21,4 @@ const schedule: ScheduledTrigger<typeof RaffleWorkflow.definition> = {
     frequency: { type: "daily" },
   },
 };
-export default schedule;
+export default scheduled_raffle_trigger;
