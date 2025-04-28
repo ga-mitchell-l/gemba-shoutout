@@ -19,10 +19,14 @@ export const SpinRaffleFunction = DefineFunction({
       next_guiding_principle: {
         type: Schema.types.string,
       },
+      scheduled: {
+        type: Schema.types.string,
+      },
     },
     required: [
       "event_timestamp",
       "channel_id",
+      "on_demand",
     ],
   },
   output_parameters: {
@@ -37,14 +41,16 @@ export default SlackFunction(
     const {
       event_timestamp,
       channel_id,
+      scheduled,
     } = inputs;
 
     const raffle_date = new Date(event_timestamp * 1000);
 
-    // if (raffle_date.getDate()!==1) {
-    //     return
-    // }
-    // maybe have a debug mode here?
+    // if this was called by the scheduled trigger and it is not the
+    // first of the month, do not continue
+    if (scheduled === "true" && raffle_date.getDate() !== 1) {
+      return { outputs: {} };
+    }
 
     const { month_start_timestamp, month_end_timestamp } = getMonthTimeStamps(
       raffle_date,

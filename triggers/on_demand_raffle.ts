@@ -14,6 +14,9 @@ const on_demand_raffle_trigger: Trigger<typeof RaffleWorkflow.definition> = {
     event_timestamp: {
       value: TriggerContextData.Shortcut.event_timestamp,
     },
+    scheduled: {
+      value: "false",
+    },
   },
 };
 
