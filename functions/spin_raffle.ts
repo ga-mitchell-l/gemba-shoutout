@@ -26,7 +26,7 @@ export const SpinRaffleFunction = DefineFunction({
     required: [
       "event_timestamp",
       "channel_id",
-      "on_demand",
+      "scheduled",
     ],
   },
   output_parameters: {
